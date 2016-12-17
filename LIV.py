@@ -3,43 +3,47 @@
 import xlrd
 from functools import reduce
 def readexcel(num):
-    with xlrd.open_workbook('/media/chongjie/项目/python/LearnPython/%s 2016-11-1原始数据.xls'%(str(num).zfill(2))) as data:
-            table = data.sheet_by_index(0)
-            sheet = []
-            for n in range(5):
-                shuju = []
-                for i in range(800):
-                    try:
-                        data = table.cell(i,n).value
-                    except:
-                        break
-                    else:
-                        if data !='':
-                            shuju.append(data)
+    try:
+        with xlrd.open_workbook('/media/chongjie/项目/python/LearnPython/%s 2016-11-1原始数据.xls'%(str(num).zfill(2))) as data:
+                table = data.sheet_by_index(0)
+                sheet = []
+                for n in range(5):
+                    shuju = []
+                    for i in range(800):
+                        try:
+                            data = table.cell(i,n).value
+                        except:
+                            break
                         else:
-                            pass
-                sheet.append(shuju)
-            # print(len(sheet[0]),len(sheet[1]),len(sheet[2]),len(sheet[3]),len(sheet[4]))
-            num1 = len(sheet[1])
-            num2 = len(sheet[2])
-            num3 = len(sheet[3])
-            num4 = len(sheet[4])
+                            if data !='':
+                                shuju.append(data)
+                            else:
+                                pass
+                    sheet.append(shuju)
+                # print(len(sheet[0]),len(sheet[1]),len(sheet[2]),len(sheet[3]),len(sheet[4]))
+                num1 = len(sheet[1])
+                num2 = len(sheet[2])
+                num3 = len(sheet[3])
+                num4 = len(sheet[4])
 
-            # datax = []
-            # datax.append(sheet[0][0:num1])
-            # datax.append(sheet[0][num1:num1+num2])
-            # datax.append(sheet[0][num1+num2:num1+num2+num3])
-            # datax.append(sheet[0][num1+num2+num3:num1+num2+num3+num4])
-            # print(datax)
+                # datax = []
+                # datax.append(sheet[0][0:num1])
+                # datax.append(sheet[0][num1:num1+num2])
+                # datax.append(sheet[0][num1+num2:num1+num2+num3])
+                # datax.append(sheet[0][num1+num2+num3:num1+num2+num3+num4])
+                # print(datax)
 
-            diyizu = [sheet[0][0:num1],sheet[1]]
-            dierzu = [sheet[0][num1:num1+num2],sheet[2]]
-            disanzu = [sheet[0][num1+num2:num1+num2+num3],sheet[3]]
-            disizu = [sheet[0][num1+num2+num3:num1+num2+num3+num4],sheet[4]]
+                diyizu = [sheet[0][0:num1],sheet[1]]
+                dierzu = [sheet[0][num1:num1+num2],sheet[2]]
+                disanzu = [sheet[0][num1+num2:num1+num2+num3],sheet[3]]
+                disizu = [sheet[0][num1+num2+num3:num1+num2+num3+num4],sheet[4]]
 
-            excel=[diyizu,dierzu,disanzu,disizu]
+                excel=[diyizu,dierzu,disanzu,disizu]
 
-    return excel
+        return excel
+    except:
+        print("文件不存在")
+        exit()
 def LSM(x,y,m,n):
     """
     最小二乘法算法
@@ -147,19 +151,47 @@ class  LIV():
         final4 = self.diff(final3[0],final3[1])
         self.finalx = final4[0]
         self.finaly = final4[1]
+        # print(final4)
         return final4
+
 
     def __call__(self, *args, **kwargs):
         self.chuli()
-        maxindex = self.finaly.index(max(self.finaly))
+        max1 = max(self.finaly)
+        maxindex = self.finaly.index(max1)
         xishu = [self.finalx[maxindex-1:maxindex+2],self.finaly[maxindex-1:maxindex+2]]
         # print(maxindex,len(self.finalx),len(self.finaly))
-        EOF = LSM(xishu[0],xishu[1],3,len(xishu[0]))
+        try:
+            EOF = LSM(xishu[0],xishu[1],3,len(xishu[0]))
+        except:
+            print("数据有误")
+            exit()
         yuzhi = -1*EOF[1]/(2*EOF[2])
-        return yuzhi
+
+        if max(self.finaly)>5:
+            for i in range(20):
+                del self.finalx[maxindex]
+                del self.finaly[maxindex]
+                max2 = max(self.finaly)
+                if max2>5: continue
+                maxindex = self.finaly.index(max2)
+                xishu1 = [self.finalx[maxindex-1:maxindex+2],self.finaly[maxindex-1:maxindex+2]]
+                # print(maxindex,len(self.finalx),len(self.finaly))
+                try:
+                    EOF1 = LSM(xishu1[0],xishu1[1],3,len(xishu1[0]))
+                except:
+                    print("数据有误")
+                yuzhi1 = -1*EOF1[1]/(2*EOF1[2])
+                return [yuzhi,max1,yuzhi1,max2]
+
+        return [yuzhi,max1]
 
 if __name__=="__main__":
-    a = readexcel(17)
+    a = readexcel(7)
+    # print(a[2])
+    # result = LIV(a[2])
+    # result()
     result = [LIV(a[i])() for i in range(4)]
+    # print(result.finalx,result.finaly)
     print(result)
 
